@@ -14,9 +14,10 @@ on:
 jobs:
   build:
     runs-on: ${{matrix.os}}
-    matrix:
-      os: [ macos-latest ]
-      sdk: [ stable ]
+    strategy:
+      matrix:
+        os: [ macos-latest ]
+        sdk: [ stable ]
     steps:
       - uses: actions/checkout@v3
 
