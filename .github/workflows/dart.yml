@@ -15,7 +15,7 @@ jobs:
   build:
     runs-on: ${{matrix.os}}
     matrix:
-      os: [ android-latest, ios-latest ]
+      os: [ macos-latest ]
       sdk: [ stable ]
     steps:
       - uses: actions/checkout@v3
