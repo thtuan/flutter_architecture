@@ -3,45 +3,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logging/logging.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-// enum CallingEventSignal { makeCall, answerCall, offer, answer, candidate, none }
-
-// extension CallingEventSignalToString on CallingEventSignal {
-//   String parseString() {
-//     switch (this) {
-//       case CallingEventSignal.makeCall:
-//         return 'MAKE_CALL';
-//       case CallingEventSignal.answerCall:
-//         return 'ANSWER_CALL';
-//       case CallingEventSignal.offer:
-//         return 'OFFER';
-//       case CallingEventSignal.answer:
-//         return 'ANSWER';
-//       case CallingEventSignal.candidate:
-//         return 'CANDIDATE';
-//       case CallingEventSignal.none:
-//         return 'NONE';
-//     }
-//   }
-// }
-//
-// extension ExtCallingEventSignal on String {
-//   CallingEventSignal toSignalEvent() {
-//     switch (this) {
-//       case 'MAKE_CALL':
-//         return CallingEventSignal.makeCall;
-//       case 'ANSWER_CALL':
-//         return CallingEventSignal.answerCall;
-//       case 'OFFER':
-//         return CallingEventSignal.offer;
-//       case 'ANSWER':
-//         return CallingEventSignal.answer;
-//       case 'CANDIDATE':
-//         return CallingEventSignal.candidate;
-//     }
-//     return CallingEventSignal.none;
-//   }
-// }
-
 class CallingSignal {
   late final Map<String, Function> eventActions;
 
