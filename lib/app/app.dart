@@ -37,14 +37,15 @@ class App {
     _initApiClient();
     _initRepositories();
     _initBlocs();
-    SocketSignal.instance.openConnection('ws://10.0.112.71:8080/ws');
+    SocketSignal.instance.openConnection('ws://192.168.1.2:8080/ws');
   }
 
   void _initLogging() {
     Logger.root.clearListeners();
     Logger.root.level = Level.ALL; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
-      debugPrint('Architecture==${record.level.name}: ${record.time}: ${record.message}');
+      debugPrint(
+          'Architecture==${record.level.name}: ${record.time}: ${record.message}');
     });
   }
 

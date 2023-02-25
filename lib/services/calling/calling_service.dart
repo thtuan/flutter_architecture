@@ -128,7 +128,7 @@ class CallingService {
     await remoteVideo?.initialize();
     if (WebRTC.platformIsWeb) {
       var stream = await navigator.mediaDevices
-          .getUserMedia({'video': true, 'audio': false});
+          .getUserMedia({'video': true, 'audio': true});
       localVideo?.srcObject = stream;
       _localStream = stream;
     } else {
