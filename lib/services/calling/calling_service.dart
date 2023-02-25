@@ -1,4 +1,4 @@
-import 'package:architecture/services/calling/calling_signal.dart';
+import 'package:architecture/services/calling/socket_signal.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:logging/logging.dart';
 
@@ -32,8 +32,8 @@ class CallingService {
   MediaStream? _localStream;
   MediaStream? _remoteStream;
   StreamStateCallback? onAddRemoteStream;
-  RTCVideoRenderer? _localVideo;
-  RTCVideoRenderer? _remoteVideo;
+  RTCVideoRenderer? localVideo;
+  RTCVideoRenderer? remoteVideo;
 
   RTCPeerConnectionState callingState =
       RTCPeerConnectionState.RTCPeerConnectionStateClosed;
@@ -47,41 +47,26 @@ class CallingService {
     _localStream?.getTracks().forEach((track) {
       peerConnection?.addTrack(track, _localStream!);
     });
-
-    peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
-      logger.info('Got candidate: ${candidate.toMap()}');
-      CallingSignal.instance
-          .sendEvent({'type': 'CANDIDATE', 'data': candidate.toMap()});
-    };
-
-    peerConnection?.onTrack = (RTCTrackEvent event) {
-      logger.info('Got remote track: ${event.streams[0]}');
-
-      event.streams[0].getTracks().forEach((track) {
-        logger.info('Add a track to the remoteStream $track');
-        _remoteStream?.addTrack(track);
-      });
-    };
   }
 
   Future<void> makeOutGoingCall(String to) async {
     final event = {'type': 'MAKE_CALL', 'remote': to};
-    CallingSignal.instance.sendEvent(event);
+    SocketSignal.instance.sendEvent(event);
   }
 
   Future<void> answerIncomingCall(String to) async {
     final event = {'type': 'ANSWER_CALL', 'remote': to};
-    CallingSignal.instance.sendEvent(event);
+    SocketSignal.instance.sendEvent(event);
   }
 
   void makeHangUp(RTCVideoRenderer localVideo) {
     final event = {'type': 'HANG_UP'};
-    CallingSignal.instance.sendEvent(event);
+    SocketSignal.instance.sendEvent(event);
     hangUp();
   }
 
   Future<void> hangUp() async {
-    List<MediaStreamTrack>? tracks = _localVideo?.srcObject?.getTracks();
+    List<MediaStreamTrack>? tracks = localVideo?.srcObject?.getTracks();
     if (tracks != null) {
       for (var track in tracks) {
         track.stop();
@@ -124,31 +109,45 @@ class CallingService {
   }
 
   // Use for remote offer / answer
-  Future<void> addRemoteDescription(Map<String, dynamic> data) async {
-    if (peerConnection?.getRemoteDescription() != null &&
-        data['answer'] != null) {
-      var answer = RTCSessionDescription(
-        data['answer']['sdp'],
-        data['answer']['type'],
+  Future<void> addRemoteDescription(Map<String, dynamic>? data) async {
+    if (peerConnection?.getRemoteDescription() != null && data != null) {
+      var remoteDescription = RTCSessionDescription(
+        data['sdp'],
+        data['type'],
       );
 
       logger.info("Someone tried to connect");
-      await peerConnection?.setRemoteDescription(answer);
+      await peerConnection?.setRemoteDescription(remoteDescription);
     }
   }
 
   Future<void> openUserMedia() async {
-    _localVideo = RTCVideoRenderer();
-    _localVideo?.initialize();
-    _remoteVideo = RTCVideoRenderer();
-    _remoteVideo?.initialize();
-    var stream = await navigator.mediaDevices
-        .getUserMedia({'video': true, 'audio': false});
+    localVideo = RTCVideoRenderer();
+    await localVideo?.initialize();
+    remoteVideo = RTCVideoRenderer();
+    await remoteVideo?.initialize();
+    if (WebRTC.platformIsWeb) {
+      var stream = await navigator.mediaDevices
+          .getUserMedia({'video': true, 'audio': false});
+      localVideo?.srcObject = stream;
+      _localStream = stream;
+    } else {
+      final Map<String, dynamic> mediaConstraints = {
+        'audio': true,
+        'video': {
+          'width': {'min': 640, 'ideal': 1920},
+          'height': {'min': 400, 'ideal': 1080},
+          'aspectRatio': {'ideal': 1.7777777778},
+          'facingMode': 'user',
+          'optional': [],
+        }
+      };
+      var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+      localVideo?.srcObject = stream;
+      _localStream = stream;
+    }
 
-    _localVideo?.srcObject = stream;
-    _localStream = stream;
-
-    _remoteVideo?.srcObject = await createLocalMediaStream('key');
+    remoteVideo?.srcObject = await createLocalMediaStream('key');
   }
 
   void registerPeerConnectionListeners() {
@@ -173,6 +172,20 @@ class CallingService {
       logger.info("Add remote stream");
       onAddRemoteStream?.call(stream);
       _remoteStream = stream;
+    };
+
+    peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
+      logger.info('Got candidate: ${candidate.toMap()}');
+      SocketSignal.instance
+          .sendEvent({'type': 'CANDIDATE', 'data': candidate.toMap()});
+    };
+
+    peerConnection?.onTrack = (RTCTrackEvent event) {
+      logger.info('Got remote track: ${event.streams[0]}');
+      event.streams[0].getTracks().forEach((track) {
+        logger.info('Add a track to the remoteStream $track');
+        _remoteStream?.addTrack(track);
+      });
     };
   }
 }

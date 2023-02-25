@@ -1,6 +1,8 @@
 import 'package:architecture/app/app.dart';
 import 'package:architecture/blocs/auth/auth_cubit.dart';
 import 'package:architecture/blocs/auth/auth_state.dart';
+import 'package:architecture/blocs/calling/calling_cubit.dart';
+import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:architecture/features/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,17 +29,36 @@ class _AppWidgetState extends State<AppWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<AuthCubit, AuthState>(
-        listener: (context, state) {
-          logging.info('auth $state');
-          state.when(authenticated: () {
-            context.go('/home');
-          }, unAuthenticated: () {
-            context.go('/login');
-          }, error: (message) {
-            Fluttertoast.showToast(msg: 'Some thing error');
-          });
-        },
-        child: const SplashPage());
+    return MultiBlocListener(
+        listeners: [
+          BlocListener<CallingCubit, CallingState>(
+            listener: (context, state) {
+              state.map(
+                  idle: (value) {},
+                  incomingCall: (value) {
+                    context.push('/incomingCall');
+                  },
+                  outgoingCall: (value) {
+                    context.push('/outgoingCall');
+                  },
+                  callConnected: (value) {
+                    context.push('/callConnected');
+                  });
+            },
+          ),
+          BlocListener<AuthCubit, AuthState>(listener: (context, state) {
+            logging.info('auth $state');
+            state.when(authenticated: () {
+              context.go('/home');
+            }, unAuthenticated: () {
+              context.go('/login');
+            }, error: (message) {
+              Fluttertoast.showToast(msg: 'Some thing error');
+            });
+          }),
+        ],
+        child: const Scaffold(
+          body: SplashPage(),
+        ));
   }
 }

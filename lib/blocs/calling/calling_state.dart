@@ -23,7 +23,6 @@ class CallingState with _$CallingState {
     required RTCVideoRenderer remoteRenderer,
     String? remoteInformation,
     String? localInformation,
-    required bool connected,
     required bool enableCamera,
     required bool enableSpeaker,
   }) = _CallConnected;

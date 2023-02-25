@@ -5,7 +5,7 @@ class SplashPage extends StatelessWidget {
   const SplashPage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context)  {
+  Widget build(BuildContext context) {
     return Stack(
       children: [
         Container(color: Colors.white),

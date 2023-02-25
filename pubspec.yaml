@@ -52,6 +52,7 @@ dependencies:
   flutter_webrtc: ^0.9.23
   web_socket_channel: ^2.3.0
   fluttertoast: ^8.2.1
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

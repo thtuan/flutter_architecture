@@ -3,7 +3,7 @@ import 'package:architecture/blocs/calling/calling_cubit.dart';
 import 'package:architecture/blocs/theme/theme_cubit.dart';
 import 'package:architecture/repository/auth/auth_repository.dart';
 import 'package:architecture/services/api/client/auth_client.dart';
-import 'package:architecture/services/calling/calling_signal.dart';
+import 'package:architecture/services/calling/socket_signal.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:logging/logging.dart';
 
@@ -37,20 +37,21 @@ class App {
     _initApiClient();
     _initRepositories();
     _initBlocs();
-    CallingSignal.instance.openConnection('ws://10.0.112.71:8080/ws');
+    SocketSignal.instance.openConnection('ws://10.0.112.71:8080/ws');
   }
 
   void _initLogging() {
+    Logger.root.clearListeners();
     Logger.root.level = Level.ALL; // defaults to Level.INFO
     Logger.root.onRecord.listen((record) {
-      debugPrint('${record.level.name}: ${record.time}: ${record.message}');
+      debugPrint('Architecture==${record.level.name}: ${record.time}: ${record.message}');
     });
   }
 
   void _initBlocs() {
     _themeCubit = ThemeCubit();
     _authCubit = AuthCubit(_authRepository);
-    _callingCubit = CallingCubit();
+    _callingCubit = CallingCubit()..startListenEvent();
   }
 
   void _initRepositories() {

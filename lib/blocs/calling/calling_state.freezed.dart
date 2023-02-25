@@ -34,7 +34,6 @@ mixin _$CallingState {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
@@ -53,7 +52,6 @@ mixin _$CallingState {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -71,7 +69,6 @@ mixin _$CallingState {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -235,7 +232,6 @@ class _$_Idle implements _Idle {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
@@ -257,7 +253,6 @@ class _$_Idle implements _Idle {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -278,7 +273,6 @@ class _$_Idle implements _Idle {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -433,7 +427,6 @@ class _$_IncomingCall implements _IncomingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
@@ -455,7 +448,6 @@ class _$_IncomingCall implements _IncomingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -476,7 +468,6 @@ class _$_IncomingCall implements _IncomingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -632,7 +623,6 @@ class _$_OutgoingCall implements _OutgoingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
@@ -654,7 +644,6 @@ class _$_OutgoingCall implements _OutgoingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -675,7 +664,6 @@ class _$_OutgoingCall implements _OutgoingCall {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -753,7 +741,6 @@ abstract class _$$_CallConnectedCopyWith<$Res>
       RTCVideoRenderer remoteRenderer,
       String? remoteInformation,
       String? localInformation,
-      bool connected,
       bool enableCamera,
       bool enableSpeaker});
 }
@@ -773,7 +760,6 @@ class __$$_CallConnectedCopyWithImpl<$Res>
     Object? remoteRenderer = null,
     Object? remoteInformation = freezed,
     Object? localInformation = freezed,
-    Object? connected = null,
     Object? enableCamera = null,
     Object? enableSpeaker = null,
   }) {
@@ -794,10 +780,6 @@ class __$$_CallConnectedCopyWithImpl<$Res>
           ? _value.localInformation
           : localInformation // ignore: cast_nullable_to_non_nullable
               as String?,
-      connected: null == connected
-          ? _value.connected
-          : connected // ignore: cast_nullable_to_non_nullable
-              as bool,
       enableCamera: null == enableCamera
           ? _value.enableCamera
           : enableCamera // ignore: cast_nullable_to_non_nullable
@@ -818,7 +800,6 @@ class _$_CallConnected implements _CallConnected {
       required this.remoteRenderer,
       this.remoteInformation,
       this.localInformation,
-      required this.connected,
       required this.enableCamera,
       required this.enableSpeaker});
 
@@ -831,15 +812,13 @@ class _$_CallConnected implements _CallConnected {
   @override
   final String? localInformation;
   @override
-  final bool connected;
-  @override
   final bool enableCamera;
   @override
   final bool enableSpeaker;
 
   @override
   String toString() {
-    return 'CallingState.callConnected(localRenderer: $localRenderer, remoteRenderer: $remoteRenderer, remoteInformation: $remoteInformation, localInformation: $localInformation, connected: $connected, enableCamera: $enableCamera, enableSpeaker: $enableSpeaker)';
+    return 'CallingState.callConnected(localRenderer: $localRenderer, remoteRenderer: $remoteRenderer, remoteInformation: $remoteInformation, localInformation: $localInformation, enableCamera: $enableCamera, enableSpeaker: $enableSpeaker)';
   }
 
   @override
@@ -855,8 +834,6 @@ class _$_CallConnected implements _CallConnected {
                 other.remoteInformation == remoteInformation) &&
             (identical(other.localInformation, localInformation) ||
                 other.localInformation == localInformation) &&
-            (identical(other.connected, connected) ||
-                other.connected == connected) &&
             (identical(other.enableCamera, enableCamera) ||
                 other.enableCamera == enableCamera) &&
             (identical(other.enableSpeaker, enableSpeaker) ||
@@ -864,15 +841,8 @@ class _$_CallConnected implements _CallConnected {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      localRenderer,
-      remoteRenderer,
-      remoteInformation,
-      localInformation,
-      connected,
-      enableCamera,
-      enableSpeaker);
+  int get hashCode => Object.hash(runtimeType, localRenderer, remoteRenderer,
+      remoteInformation, localInformation, enableCamera, enableSpeaker);
 
   @JsonKey(ignore: true)
   @override
@@ -897,13 +867,12 @@ class _$_CallConnected implements _CallConnected {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
   }) {
     return callConnected(localRenderer, remoteRenderer, remoteInformation,
-        localInformation, connected, enableCamera, enableSpeaker);
+        localInformation, enableCamera, enableSpeaker);
   }
 
   @override
@@ -920,13 +889,12 @@ class _$_CallConnected implements _CallConnected {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
   }) {
     return callConnected?.call(localRenderer, remoteRenderer, remoteInformation,
-        localInformation, connected, enableCamera, enableSpeaker);
+        localInformation, enableCamera, enableSpeaker);
   }
 
   @override
@@ -942,7 +910,6 @@ class _$_CallConnected implements _CallConnected {
             RTCVideoRenderer remoteRenderer,
             String? remoteInformation,
             String? localInformation,
-            bool connected,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
@@ -950,7 +917,7 @@ class _$_CallConnected implements _CallConnected {
   }) {
     if (callConnected != null) {
       return callConnected(localRenderer, remoteRenderer, remoteInformation,
-          localInformation, connected, enableCamera, enableSpeaker);
+          localInformation, enableCamera, enableSpeaker);
     }
     return orElse();
   }
@@ -999,7 +966,6 @@ abstract class _CallConnected implements CallingState {
       required final RTCVideoRenderer remoteRenderer,
       final String? remoteInformation,
       final String? localInformation,
-      required final bool connected,
       required final bool enableCamera,
       required final bool enableSpeaker}) = _$_CallConnected;
 
@@ -1009,7 +975,6 @@ abstract class _CallConnected implements CallingState {
   String? get remoteInformation;
   @override
   String? get localInformation;
-  bool get connected;
   bool get enableCamera;
   bool get enableSpeaker;
   @override
