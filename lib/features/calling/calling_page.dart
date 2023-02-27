@@ -1,9 +1,9 @@
 import 'package:architecture/blocs/calling/calling_cubit.dart';
-import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:logging/logging.dart';
+import 'package:lottie/lottie.dart';
 
 class CallingPage extends StatefulWidget {
   const CallingPage({Key? key}) : super(key: key);
@@ -55,110 +55,125 @@ class IncomingCall extends StatefulWidget {
 }
 
 class _IncomingCallState extends State<IncomingCall> {
-  bool enableCamera = false;
-  bool enableMicrophone = false;
-  bool waitingPermission = true;
+  final _log = Logger('_IncomingCallState');
 
   @override
   void initState() {
     super.initState();
-    checkPermission().then((value) {
-      if (value) {
-        setState(() {
-          waitingPermission = false;
-        });
-      }
-    });
-  }
-
-  Future<bool> checkPermission() async {
-    final camera = await Permission.camera.request();
-    final mic = await Permission.microphone.request();
-    return camera.isGranted && mic.isGranted;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: waitingPermission
-          ? const Center(child: Text('Waiting permission...'))
-          : Stack(fit: StackFit.expand, children: [
-              Container(
-                color: Colors.green,
+      body: Stack(fit: StackFit.expand, children: [
+        Container(
+          color: Colors.blue,
+        ),
+        Center(
+          child: WaveAnimated(
+            child: Lottie.asset('assets/lotties/home.json'),
+          ),
+        ),
+        Align(
+          alignment: const Alignment(0, 0.9),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RawMaterialButton(
+                onPressed: () {
+                  _log.info('hangUp');
+                  context.read<CallingCubit>().hangUp();
+                },
+                elevation: 2.0,
+                fillColor: Colors.red,
+                padding: const EdgeInsets.all(15.0),
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.phone_disabled_rounded,
+                  size: 35.0,
+                  color: Colors.white,
+                ),
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Incoming call...'),
-                  ElevatedButton(
-                      onPressed: () {
-                        context.read<CallingCubit>().answer();
-                      },
-                      child: const Text('Answer')),
-                ],
-              ),
-            ]),
+              RawMaterialButton(
+                onPressed: () {
+                  context.read<CallingCubit>().answer();
+                },
+                elevation: 2.0,
+                fillColor: Colors.green,
+                padding: const EdgeInsets.all(15.0),
+                shape: const CircleBorder(),
+                child: const Icon(
+                  Icons.phone,
+                  size: 35.0,
+                  color: Colors.white,
+                ),
+              )
+                  .animate(onPlay: (controller) => controller.repeat())
+                  .shake(duration: 500.ms)
+            ],
+          ),
+        ),
+      ]),
     );
   }
 }
 
-class ConnectedCall extends StatefulWidget {
-  const ConnectedCall({Key? key}) : super(key: key);
+class WaveAnimated extends StatefulWidget {
+  final Widget? child;
+
+  const WaveAnimated({Key? key, this.child}) : super(key: key);
 
   @override
-  State<ConnectedCall> createState() => _ConnectedCallState();
+  State<WaveAnimated> createState() => _WaveAnimatedState();
 }
 
-class _ConnectedCallState extends State<ConnectedCall> {
-  late final CallingCubit _callingCubit;
-
-  @override
-  void initState() {
-    _callingCubit = context.read<CallingCubit>();
-    super.initState();
-  }
-
+class _WaveAnimatedState extends State<WaveAnimated>
+    with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: BlocBuilder<CallingCubit, CallingState>(
-      builder: (context, state) {
-        return state.maybeMap(callConnected: (value) {
-          return Stack(
-            fit: StackFit.expand,
-            children: [
-              Container(
-                color: Colors.yellow,
-              ),
-              Align(
-                alignment: const Alignment(0.9, -0.85),
-                child: Container(
-                    width: 90,
-                    height: 160,
-                    decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: RTCVideoView(
-                      value.localRenderer,
-                      mirror: true,
-                      objectFit:
-                          RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-                    )),
-              ),
-              RTCVideoView(
-                value.remoteRenderer,
-                objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
-              ),
-            ],
-          );
-        }, orElse: () {
-          return Container();
-        });
-      },
-    ));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
+    return Stack(children: [
+      Container(
+        decoration:
+            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+      )
+          .animate(onPlay: (controller) => controller.repeat())
+          .fadeOut(duration: 3.seconds)
+          .scale(
+              duration: 3.seconds,
+              begin: const Offset(0, 0),
+              end: const Offset(0.5, 0.5)),
+      Container(
+        decoration:
+            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+      )
+          .animate(
+              delay: 1.seconds, onPlay: (controller) => controller.repeat())
+          .fadeOut(duration: 3.seconds)
+          .scale(
+              duration: 3.seconds,
+              begin: const Offset(0, 0),
+              end: const Offset(0.5, 0.5)),
+      Container(
+        decoration:
+            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+      )
+          .animate(
+              delay: 2.seconds, onPlay: (controller) => controller.repeat())
+          .fadeOut(duration: 3.seconds)
+          .scale(
+              duration: 3.seconds,
+              begin: const Offset(0, 0),
+              end: const Offset(0.5, 0.5)),
+      Center(
+        child: Container(
+          decoration:
+              const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+          width: 60,
+          height: 60,
+          padding: const EdgeInsets.all(10),
+          child: widget.child,
+        ),
+      )
+    ]);
   }
 }

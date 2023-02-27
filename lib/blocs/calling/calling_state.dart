@@ -19,8 +19,8 @@ class CallingState with _$CallingState {
   }) = _OutgoingCall;
 
   const factory CallingState.callConnected({
-    required RTCVideoRenderer localRenderer,
-    required RTCVideoRenderer remoteRenderer,
+    required MediaStream localStream,
+    required List<MediaStream> remoteStreams,
     String? remoteInformation,
     String? localInformation,
     required bool enableCamera,

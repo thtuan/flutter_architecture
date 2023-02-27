@@ -1,14 +1,15 @@
 import 'package:architecture/features/app.dart';
 import 'package:architecture/features/calling/calling_page.dart';
+import 'package:architecture/features/calling/connected_call.dart';
 import 'package:architecture/features/home/home_page.dart';
 import 'package:architecture/features/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-final GlobalKey<NavigatorState> _rootNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouter =
-    GoRouter(initialLocation: '/', navigatorKey: _rootNavigatorKey, routes: [
+    GoRouter(initialLocation: '/', navigatorKey: rootNavigatorKey, routes: [
   GoRoute(
     path: '/',
     pageBuilder: (context, state) => transitionPage(const AppWidget()),

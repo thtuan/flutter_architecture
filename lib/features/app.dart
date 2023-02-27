@@ -33,17 +33,15 @@ class _AppWidgetState extends State<AppWidget> {
         listeners: [
           BlocListener<CallingCubit, CallingState>(
             listener: (context, state) {
-              state.map(
-                  idle: (value) {},
-                  incomingCall: (value) {
-                    context.push('/incomingCall');
-                  },
-                  outgoingCall: (value) {
-                    context.push('/outgoingCall');
-                  },
-                  callConnected: (value) {
-                    context.push('/callConnected');
-                  });
+              state.map(idle: (value) {
+                if (context.canPop()) context.pop();
+              }, incomingCall: (value) {
+                context.push('/incomingCall');
+              }, outgoingCall: (value) {
+                context.push('/outgoingCall');
+              }, callConnected: (value) {
+                context.pushReplacement('/callConnected');
+              });
             },
           ),
           BlocListener<AuthCubit, AuthState>(listener: (context, state) {

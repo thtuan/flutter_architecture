@@ -30,8 +30,8 @@ mixin _$CallingState {
             String? remoteInformation, String? localInformation)
         outgoingCall,
     required TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -48,8 +48,8 @@ mixin _$CallingState {
     TResult? Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult? Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -65,8 +65,8 @@ mixin _$CallingState {
     TResult Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -228,8 +228,8 @@ class _$_Idle implements _Idle {
             String? remoteInformation, String? localInformation)
         outgoingCall,
     required TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -249,8 +249,8 @@ class _$_Idle implements _Idle {
     TResult? Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult? Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -269,8 +269,8 @@ class _$_Idle implements _Idle {
     TResult Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -423,8 +423,8 @@ class _$_IncomingCall implements _IncomingCall {
             String? remoteInformation, String? localInformation)
         outgoingCall,
     required TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -444,8 +444,8 @@ class _$_IncomingCall implements _IncomingCall {
     TResult? Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult? Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -464,8 +464,8 @@ class _$_IncomingCall implements _IncomingCall {
     TResult Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -619,8 +619,8 @@ class _$_OutgoingCall implements _OutgoingCall {
             String? remoteInformation, String? localInformation)
         outgoingCall,
     required TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -640,8 +640,8 @@ class _$_OutgoingCall implements _OutgoingCall {
     TResult? Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult? Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -660,8 +660,8 @@ class _$_OutgoingCall implements _OutgoingCall {
     TResult Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -737,8 +737,8 @@ abstract class _$$_CallConnectedCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {RTCVideoRenderer localRenderer,
-      RTCVideoRenderer remoteRenderer,
+      {MediaStream localStream,
+      List<MediaStream> remoteStreams,
       String? remoteInformation,
       String? localInformation,
       bool enableCamera,
@@ -756,22 +756,22 @@ class __$$_CallConnectedCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? localRenderer = null,
-    Object? remoteRenderer = null,
+    Object? localStream = null,
+    Object? remoteStreams = null,
     Object? remoteInformation = freezed,
     Object? localInformation = freezed,
     Object? enableCamera = null,
     Object? enableSpeaker = null,
   }) {
     return _then(_$_CallConnected(
-      localRenderer: null == localRenderer
-          ? _value.localRenderer
-          : localRenderer // ignore: cast_nullable_to_non_nullable
-              as RTCVideoRenderer,
-      remoteRenderer: null == remoteRenderer
-          ? _value.remoteRenderer
-          : remoteRenderer // ignore: cast_nullable_to_non_nullable
-              as RTCVideoRenderer,
+      localStream: null == localStream
+          ? _value.localStream
+          : localStream // ignore: cast_nullable_to_non_nullable
+              as MediaStream,
+      remoteStreams: null == remoteStreams
+          ? _value._remoteStreams
+          : remoteStreams // ignore: cast_nullable_to_non_nullable
+              as List<MediaStream>,
       remoteInformation: freezed == remoteInformation
           ? _value.remoteInformation
           : remoteInformation // ignore: cast_nullable_to_non_nullable
@@ -796,17 +796,24 @@ class __$$_CallConnectedCopyWithImpl<$Res>
 
 class _$_CallConnected implements _CallConnected {
   const _$_CallConnected(
-      {required this.localRenderer,
-      required this.remoteRenderer,
+      {required this.localStream,
+      required final List<MediaStream> remoteStreams,
       this.remoteInformation,
       this.localInformation,
       required this.enableCamera,
-      required this.enableSpeaker});
+      required this.enableSpeaker})
+      : _remoteStreams = remoteStreams;
 
   @override
-  final RTCVideoRenderer localRenderer;
+  final MediaStream localStream;
+  final List<MediaStream> _remoteStreams;
   @override
-  final RTCVideoRenderer remoteRenderer;
+  List<MediaStream> get remoteStreams {
+    if (_remoteStreams is EqualUnmodifiableListView) return _remoteStreams;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_remoteStreams);
+  }
+
   @override
   final String? remoteInformation;
   @override
@@ -818,7 +825,7 @@ class _$_CallConnected implements _CallConnected {
 
   @override
   String toString() {
-    return 'CallingState.callConnected(localRenderer: $localRenderer, remoteRenderer: $remoteRenderer, remoteInformation: $remoteInformation, localInformation: $localInformation, enableCamera: $enableCamera, enableSpeaker: $enableSpeaker)';
+    return 'CallingState.callConnected(localStream: $localStream, remoteStreams: $remoteStreams, remoteInformation: $remoteInformation, localInformation: $localInformation, enableCamera: $enableCamera, enableSpeaker: $enableSpeaker)';
   }
 
   @override
@@ -826,10 +833,10 @@ class _$_CallConnected implements _CallConnected {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$_CallConnected &&
-            (identical(other.localRenderer, localRenderer) ||
-                other.localRenderer == localRenderer) &&
-            (identical(other.remoteRenderer, remoteRenderer) ||
-                other.remoteRenderer == remoteRenderer) &&
+            (identical(other.localStream, localStream) ||
+                other.localStream == localStream) &&
+            const DeepCollectionEquality()
+                .equals(other._remoteStreams, _remoteStreams) &&
             (identical(other.remoteInformation, remoteInformation) ||
                 other.remoteInformation == remoteInformation) &&
             (identical(other.localInformation, localInformation) ||
@@ -841,8 +848,14 @@ class _$_CallConnected implements _CallConnected {
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, localRenderer, remoteRenderer,
-      remoteInformation, localInformation, enableCamera, enableSpeaker);
+  int get hashCode => Object.hash(
+      runtimeType,
+      localStream,
+      const DeepCollectionEquality().hash(_remoteStreams),
+      remoteInformation,
+      localInformation,
+      enableCamera,
+      enableSpeaker);
 
   @JsonKey(ignore: true)
   @override
@@ -863,15 +876,15 @@ class _$_CallConnected implements _CallConnected {
             String? remoteInformation, String? localInformation)
         outgoingCall,
     required TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
             bool enableSpeaker)
         callConnected,
   }) {
-    return callConnected(localRenderer, remoteRenderer, remoteInformation,
+    return callConnected(localStream, remoteStreams, remoteInformation,
         localInformation, enableCamera, enableSpeaker);
   }
 
@@ -885,15 +898,15 @@ class _$_CallConnected implements _CallConnected {
     TResult? Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult? Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
             bool enableSpeaker)?
         callConnected,
   }) {
-    return callConnected?.call(localRenderer, remoteRenderer, remoteInformation,
+    return callConnected?.call(localStream, remoteStreams, remoteInformation,
         localInformation, enableCamera, enableSpeaker);
   }
 
@@ -906,8 +919,8 @@ class _$_CallConnected implements _CallConnected {
     TResult Function(String? remoteInformation, String? localInformation)?
         outgoingCall,
     TResult Function(
-            RTCVideoRenderer localRenderer,
-            RTCVideoRenderer remoteRenderer,
+            MediaStream localStream,
+            List<MediaStream> remoteStreams,
             String? remoteInformation,
             String? localInformation,
             bool enableCamera,
@@ -916,7 +929,7 @@ class _$_CallConnected implements _CallConnected {
     required TResult orElse(),
   }) {
     if (callConnected != null) {
-      return callConnected(localRenderer, remoteRenderer, remoteInformation,
+      return callConnected(localStream, remoteStreams, remoteInformation,
           localInformation, enableCamera, enableSpeaker);
     }
     return orElse();
@@ -962,15 +975,15 @@ class _$_CallConnected implements _CallConnected {
 
 abstract class _CallConnected implements CallingState {
   const factory _CallConnected(
-      {required final RTCVideoRenderer localRenderer,
-      required final RTCVideoRenderer remoteRenderer,
+      {required final MediaStream localStream,
+      required final List<MediaStream> remoteStreams,
       final String? remoteInformation,
       final String? localInformation,
       required final bool enableCamera,
       required final bool enableSpeaker}) = _$_CallConnected;
 
-  RTCVideoRenderer get localRenderer;
-  RTCVideoRenderer get remoteRenderer;
+  MediaStream get localStream;
+  List<MediaStream> get remoteStreams;
   @override
   String? get remoteInformation;
   @override

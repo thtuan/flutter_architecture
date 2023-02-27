@@ -28,19 +28,35 @@ class CallingService {
     ]
   };
 
+  String get sdpSemantics => 'unified-plan';
+
+  // String get sdpSemantics => 'plan-b';
+  final Map<String, dynamic> _config = {
+    "mandatory": {
+      "OfferToReceiveAudio": true,
+      "OfferToReceiveVideo": true,
+    },
+    'optional': [
+      {'DtlsSrtpKeyAgreement': true},
+    ]
+  };
+
   RTCPeerConnection? peerConnection;
   MediaStream? _localStream;
   MediaStream? _remoteStream;
   StreamStateCallback? onAddRemoteStream;
-  RTCVideoRenderer? localVideo;
-  RTCVideoRenderer? remoteVideo;
-
+  StreamStateCallback? onLocalStream;
+  Function(MediaStream, List<MediaStream>)? onConnected;
   RTCPeerConnectionState callingState =
       RTCPeerConnectionState.RTCPeerConnectionStateClosed;
 
   Future<void> initConfig() async {
+    await _openUserMedia();
     logger.info('Create PeerConnection with configuration: $configuration');
-    peerConnection = await createPeerConnection(configuration);
+    peerConnection = await createPeerConnection(_config, {
+      ...configuration,
+      ...{'sdpSemantics': sdpSemantics}
+    });
     registerPeerConnectionListeners();
 
     ///Add track to stream ==> outgoing stream
@@ -66,7 +82,7 @@ class CallingService {
   }
 
   Future<void> hangUp() async {
-    List<MediaStreamTrack>? tracks = localVideo?.srcObject?.getTracks();
+    List<MediaStreamTrack>? tracks = _localStream?.getTracks();
     if (tracks != null) {
       for (var track in tracks) {
         track.stop();
@@ -78,13 +94,13 @@ class CallingService {
     }
     if (peerConnection != null) peerConnection!.close();
 
-    _localStream!.dispose();
+    _localStream?.dispose();
     _remoteStream?.dispose();
   }
 
   Future<dynamic> createOffer() async {
     RTCSessionDescription offer = await peerConnection!.createOffer();
-    await peerConnection!.setLocalDescription(offer);
+    await peerConnection!.setLocalDescription(_fixSdp(offer));
     logger.info('Created offer: $offer');
     return offer;
   }
@@ -92,7 +108,7 @@ class CallingService {
   Future<dynamic> createAnswer() async {
     var answer = await peerConnection!.createAnswer();
     logger.info('Created Answer $answer');
-    await peerConnection!.setLocalDescription(answer);
+    await peerConnection!.setLocalDescription(_fixSdp(answer));
     return answer;
   }
 
@@ -121,33 +137,25 @@ class CallingService {
     }
   }
 
-  Future<void> openUserMedia() async {
-    localVideo = RTCVideoRenderer();
-    await localVideo?.initialize();
-    remoteVideo = RTCVideoRenderer();
-    await remoteVideo?.initialize();
-    if (WebRTC.platformIsWeb) {
-      var stream = await navigator.mediaDevices
-          .getUserMedia({'video': true, 'audio': true});
-      localVideo?.srcObject = stream;
-      _localStream = stream;
-    } else {
-      final Map<String, dynamic> mediaConstraints = {
-        'audio': true,
-        'video': {
-          'width': {'min': 640, 'ideal': 1920},
-          'height': {'min': 400, 'ideal': 1080},
-          'aspectRatio': {'ideal': 1.7777777778},
-          'facingMode': 'user',
-          'optional': [],
-        }
-      };
-      var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
-      localVideo?.srcObject = stream;
-      _localStream = stream;
-    }
+  Future<void> _openUserMedia() async {
+    final Map<String, dynamic> mediaConstraints = {
+      'audio': true,
+      'video': {
+        'mandatory': {
+          'minWidth':
+              '640', // Provide your own width, height and frame rate here
+          'minHeight': '480',
+          'minFrameRate': '30',
+        },
+        'facingMode': 'user',
+        'optional': [],
+      }
+    };
 
-    remoteVideo?.srcObject = await createLocalMediaStream('key');
+    var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    _localStream = stream;
+    // onLocalStream?.call(stream);
+    // _remoteStream = await createLocalMediaStream('key');
   }
 
   void registerPeerConnectionListeners() {
@@ -158,6 +166,9 @@ class CallingService {
     peerConnection?.onConnectionState = (RTCPeerConnectionState state) {
       logger.info('Connection state change: $state');
       callingState = state;
+      if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
+        onConnected?.call(_localStream!, [_remoteStream!]);
+      }
     };
 
     peerConnection?.onSignalingState = (RTCSignalingState state) {
@@ -170,8 +181,8 @@ class CallingService {
 
     peerConnection?.onAddStream = (MediaStream stream) {
       logger.info("Add remote stream");
-      onAddRemoteStream?.call(stream);
       _remoteStream = stream;
+      onAddRemoteStream?.call(stream);
     };
 
     peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
@@ -187,5 +198,12 @@ class CallingService {
         _remoteStream?.addTrack(track);
       });
     };
+  }
+
+  RTCSessionDescription _fixSdp(RTCSessionDescription s) {
+    var sdp = s.sdp;
+    s.sdp =
+        sdp!.replaceAll('profile-level-id=640c1f', 'profile-level-id=42e032');
+    return s;
   }
 }

@@ -12,47 +12,36 @@ class CallingCubit extends Cubit<CallingState> {
   CallingCubit() : super(const CallingState.idle());
 
   void startListenEvent() {
+    CallingService.instance.onConnected = (localStream, remoteStream) {
+      emit(CallingState.callConnected(
+          enableCamera: true,
+          enableSpeaker: true,
+          localStream: localStream,
+          remoteStreams: remoteStream));
+    };
     callingSignal.callingEvent.stream.listen((event) {
       event.maybeMap(
           receivedMakeCall: (value) {
             _log.info('Emit incoming call');
             emit(const CallingState.incomingCall());
           },
-          receivedAnswer: (value) {
-            final localVideo = callingService.localVideo;
-            final remoteVideo = callingService.remoteVideo;
-            if (localVideo != null && remoteVideo != null) {
-              emit(CallingState.callConnected(
-                  localRenderer: localVideo,
-                  remoteRenderer: remoteVideo,
-                  enableCamera: false,
-                  enableSpeaker: false));
-            }
+          receivedAnswer: (value) {},
+          receivedHandUp: (value) {
+            emit(const CallingState.idle());
           },
           orElse: () {});
     });
   }
 
   Future<void> makeCall() async {
-    await callingService.openUserMedia();
     await callingService.initConfig();
     await callingService.makeOutGoingCall('to');
     emit(const CallingState.outgoingCall());
   }
 
   Future<void> answer() async {
-    await callingService.openUserMedia();
     await callingService.initConfig();
     await callingService.answerIncomingCall('to');
-    final localVideo = callingService.localVideo;
-    final remoteVideo = callingService.remoteVideo;
-    if (localVideo != null && remoteVideo != null) {
-      emit(CallingState.callConnected(
-          localRenderer: localVideo,
-          remoteRenderer: remoteVideo,
-          enableCamera: false,
-          enableSpeaker: false));
-    }
   }
 
   Future<void> receivedIncomingCall() async {
@@ -60,11 +49,9 @@ class CallingCubit extends Cubit<CallingState> {
   }
 
   Future<void> hangUp() async {
-    state.mapOrNull(callConnected: (value) {
-      value.remoteRenderer.dispose();
-      value.localRenderer.dispose();
-    });
     await callingService.hangUp();
+    callingSignal.sendEvent({'type': 'HANG_UP'});
+    _log.info('Change state to idle');
     emit(const CallingState.idle());
   }
 }
