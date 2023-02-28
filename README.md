@@ -60,4 +60,13 @@ C2 -.-> B1
 - [ ] Support calling function with WebRTC and WebSocket
 - [ ] Config deeplink and redirect
 
+## FUTURE
+
+- [ ] Add local cache for UX improvement
+- [ ] Support notification
+- [ ] Performance -->>>
+- [ ] Stream flow explain
+
 ## Licences
+
+Updating...
