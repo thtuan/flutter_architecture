@@ -1,6 +1,6 @@
 import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:architecture/services/calling/calling_service.dart';
-import 'package:architecture/services/calling/socket_signal.dart';
+import 'package:architecture/services/socket/socket_signal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logging/logging.dart';
 
@@ -49,8 +49,7 @@ class CallingCubit extends Cubit<CallingState> {
   }
 
   Future<void> hangUp() async {
-    await callingService.hangUp();
-    callingSignal.sendEvent({'type': 'HANG_UP'});
+    await callingService.makeHangUp();
     _log.info('Change state to idle');
     emit(const CallingState.idle());
   }

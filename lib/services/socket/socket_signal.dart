@@ -35,7 +35,8 @@ class SocketSignal {
       _log.info('Received message: $event');
       _handleEvent(event);
     }, onDone: (() {
-      Fluttertoast.showToast(msg: 'On done');
+      Fluttertoast.showToast(
+          msg: 'Socket disconnected plz check your connection');
     }), onError: ((exception) {
       if (exception is SocketException) {
         openConnection(url);
@@ -59,15 +60,17 @@ class SocketSignal {
         }
       }
     } catch (exception) {
-      Fluttertoast.showToast(msg: exception.toString());
+      if (exception is FormatException) {
+        Fluttertoast.showToast(msg: event);
+      } else {
+        Fluttertoast.showToast(msg: exception.toString());
+      }
     }
   }
 
   void _receivedMakeCall(dynamic data) {
     _log.warning('_receivedMakeCall');
     callingEvent.sink.add(const CallingEvent.receivedMakeCall());
-    // final event = {'type': 'ANSWER_CALL'};
-    // sendEvent(event);
   }
 
   Future<void> _receivedAnswerCall(dynamic data) async {
@@ -96,7 +99,7 @@ class SocketSignal {
   void _receivedHangUp(dynamic data) {
     callingEvent.sink.add(const CallingEvent.receivedHandUp());
     _log.warning('_receivedHangUp');
-    CallingService.instance.hangUp();
+    CallingService.instance.stopPeerStream();
   }
 
   void _receivedCandidate(dynamic data) {

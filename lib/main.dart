@@ -11,9 +11,9 @@ void main() {
   App.instance.init();
   final app = App.instance;
   runApp(MultiBlocProvider(providers: [
+    BlocProvider(create: (context) => app.appCubit),
     BlocProvider(create: (_) => app.callingCubit),
     BlocProvider(create: (_) => app.themeCubit),
-    BlocProvider(create: (_) => app.authCubit)
   ], child: const MyApp()));
 }
 
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ThemeCubit, ThemeState>(builder: (context, state) {
       return MaterialApp.router(
-        title: 'Flutter Demo',
+        title: 'Architecture demo and flow',
         theme: state.themeData,
         routerConfig: appRouter,
       );

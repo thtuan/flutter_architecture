@@ -1,9 +1,9 @@
-import 'package:architecture/app/app.dart';
-import 'package:architecture/blocs/auth/auth_cubit.dart';
-import 'package:architecture/blocs/auth/auth_state.dart';
+import 'package:architecture/blocs/app/app_cubit.dart';
 import 'package:architecture/blocs/calling/calling_cubit.dart';
 import 'package:architecture/blocs/calling/calling_state.dart';
-import 'package:architecture/features/splash/splash_page.dart';
+import 'package:architecture/features/calling/calling_page.dart';
+import 'package:architecture/features/calling/connected_call.dart';
+import 'package:architecture/features/error/error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,7 +11,9 @@ import 'package:go_router/go_router.dart';
 import 'package:logging/logging.dart';
 
 class AppWidget extends StatefulWidget {
-  const AppWidget({Key? key}) : super(key: key);
+  final Widget child;
+
+  const AppWidget({Key? key, required this.child}) : super(key: key);
 
   @override
   State<AppWidget> createState() => _AppWidgetState();
@@ -22,8 +24,6 @@ class _AppWidgetState extends State<AppWidget> {
 
   @override
   void initState() {
-    logging.info('start check auth');
-    App.instance.authCubit.checkAuth();
     super.initState();
   }
 
@@ -31,32 +31,61 @@ class _AppWidgetState extends State<AppWidget> {
   Widget build(BuildContext context) {
     return MultiBlocListener(
         listeners: [
-          BlocListener<CallingCubit, CallingState>(
-            listener: (context, state) {
-              state.map(idle: (value) {
-                if (context.canPop()) context.pop();
-              }, incomingCall: (value) {
-                context.push('/incomingCall');
-              }, outgoingCall: (value) {
-                context.push('/outgoingCall');
-              }, callConnected: (value) {
-                context.pushReplacement('/callConnected');
-              });
-            },
-          ),
-          BlocListener<AuthCubit, AuthState>(listener: (context, state) {
-            logging.info('auth $state');
-            state.when(authenticated: () {
-              context.go('/home');
-            }, unAuthenticated: () {
+          BlocListener<AppCubit, AppState>(listener: (context, state) {
+            state.map(initial: (state) {
+              //TODO(TuanHT): do some thing with init App
+            }, inactive: (state) {
+              //TODO(TuanHT): do some thing when app deactive
+            }, error: (state) {
+              final code = state.code;
+              switch (code) {
+                case 100:
+                  break;
+                case 200:
+                  break;
+                case 300:
+                  break;
+                case 400:
+                  break;
+                default:
+                  Fluttertoast.showToast(msg: state.message);
+                  break;
+              }
+            }, inSession: (state) {
+              final lastRoutePath = state.lastRoutePath;
+              if (lastRoutePath != null) {
+                context.go(lastRoutePath);
+              } else {
+                context.go('/home');
+              }
+            }, outSession: (state) {
               context.go('/login');
-            }, error: (message) {
-              Fluttertoast.showToast(msg: 'Some thing error');
             });
           }),
         ],
-        child: const Scaffold(
-          body: SplashPage(),
-        ));
+        child: Scaffold(
+            body: Stack(
+          fit: StackFit.expand,
+          children: [
+            BlocBuilder<CallingCubit, CallingState>(
+                builder: (context, blocState) {
+              return blocState.map(idle: (idle) {
+                return widget.child;
+              }, incomingCall: (incomingCall) {
+                return const IncomingCall();
+              }, outgoingCall: (outgoingCall) {
+                return const OutgoingCall();
+              }, callConnected: (callConnected) {
+                return const ConnectedCall();
+              });
+            }),
+            BlocBuilder<AppCubit, AppState>(builder: (context, state) {
+              return Visibility(
+                  visible: state.maybeMap(
+                      error: (error) => true, orElse: () => false),
+                  child: const ErrorPage());
+            })
+          ],
+        )));
   }
 }

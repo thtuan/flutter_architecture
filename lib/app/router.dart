@@ -1,6 +1,4 @@
 import 'package:architecture/features/app.dart';
-import 'package:architecture/features/calling/calling_page.dart';
-import 'package:architecture/features/calling/connected_call.dart';
 import 'package:architecture/features/home/home_page.dart';
 import 'package:architecture/features/login/login_page.dart';
 import 'package:flutter/material.dart';
@@ -10,31 +8,24 @@ final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final appRouter =
     GoRouter(initialLocation: '/', navigatorKey: rootNavigatorKey, routes: [
-  GoRoute(
-    path: '/',
-    pageBuilder: (context, state) => transitionPage(const AppWidget()),
+  ShellRoute(
+    pageBuilder: (context, state, child) =>
+        transitionPage(AppWidget(child: child)),
     routes: [
       GoRoute(
-          path: 'login',
-          pageBuilder: (context, state) => transitionPage(const LoginPage())),
-      GoRoute(
-          path: 'home',
-          pageBuilder: (context, state) => transitionPage(const HomePage())),
-      GoRoute(
-          name: 'incomingCall',
-          path: 'incomingCall',
-          pageBuilder: (context, state) =>
-              transitionPage(const IncomingCall())),
-      GoRoute(
-          name: 'outgoingCall',
-          path: 'outgoingCall',
-          pageBuilder: (context, state) =>
-              transitionPage(const OutgoingCall())),
-      GoRoute(
-          name: 'callConnected',
-          path: 'callConnected',
-          pageBuilder: (context, state) =>
-              transitionPage(const ConnectedCall())),
+        path: '/',
+        pageBuilder: (context, state) => transitionPage(const HomePage()),
+        routes: [
+          GoRoute(
+              path: 'login',
+              pageBuilder: (context, state) =>
+                  transitionPage(const LoginPage())),
+          GoRoute(
+              path: 'home',
+              pageBuilder: (context, state) =>
+                  transitionPage(const HomePage())),
+        ],
+      ),
     ],
   ),
 ]);

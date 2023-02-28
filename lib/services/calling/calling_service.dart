@@ -1,4 +1,4 @@
-import 'package:architecture/services/calling/socket_signal.dart';
+import 'package:architecture/services/socket/socket_signal.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'package:logging/logging.dart';
 
@@ -75,13 +75,13 @@ class CallingService {
     SocketSignal.instance.sendEvent(event);
   }
 
-  void makeHangUp(RTCVideoRenderer localVideo) {
+  Future<void> makeHangUp() async {
+    await stopPeerStream();
     final event = {'type': 'HANG_UP'};
     SocketSignal.instance.sendEvent(event);
-    hangUp();
   }
 
-  Future<void> hangUp() async {
+  Future<void> stopPeerStream() async {
     List<MediaStreamTrack>? tracks = _localStream?.getTracks();
     if (tracks != null) {
       for (var track in tracks) {

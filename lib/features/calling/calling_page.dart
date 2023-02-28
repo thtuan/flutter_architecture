@@ -127,43 +127,54 @@ class WaveAnimated extends StatefulWidget {
   State<WaveAnimated> createState() => _WaveAnimatedState();
 }
 
-class _WaveAnimatedState extends State<WaveAnimated>
-    with SingleTickerProviderStateMixin {
+class _WaveAnimatedState extends State<WaveAnimated> {
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
-      Container(
-        decoration:
-            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
-      )
-          .animate(onPlay: (controller) => controller.repeat())
-          .fadeOut(duration: 3.seconds)
-          .scale(
-              duration: 3.seconds,
-              begin: const Offset(0, 0),
-              end: const Offset(0.5, 0.5)),
-      Container(
-        decoration:
-            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
-      )
-          .animate(
-              delay: 1.seconds, onPlay: (controller) => controller.repeat())
-          .fadeOut(duration: 3.seconds)
-          .scale(
-              duration: 3.seconds,
-              begin: const Offset(0, 0),
-              end: const Offset(0.5, 0.5)),
-      Container(
-        decoration:
-            const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
-      )
-          .animate(
-              delay: 2.seconds, onPlay: (controller) => controller.repeat())
-          .fadeOut(duration: 3.seconds)
-          .scale(
-              duration: 3.seconds,
-              begin: const Offset(0, 0),
-              end: const Offset(0.5, 0.5)),
+      Center(
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration:
+              const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+        )
+            .animate(onPlay: (controller) => controller.repeat())
+            .fadeOut(duration: 3.seconds)
+            .scale(
+                duration: 3.seconds,
+                begin: const Offset(1, 1),
+                end: const Offset(5, 5)),
+      ),
+      Center(
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration:
+              const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+        )
+            .animate(
+                delay: 1.seconds, onPlay: (controller) => controller.repeat())
+            .fadeOut(duration: 3.seconds)
+            .scale(
+                duration: 3.seconds,
+                begin: const Offset(1, 1),
+                end: const Offset(5, 5)),
+      ),
+      Center(
+        child: Container(
+          width: 60,
+          height: 60,
+          decoration:
+              const ShapeDecoration(color: Colors.white, shape: CircleBorder()),
+        )
+            .animate(
+                delay: 2.seconds, onPlay: (controller) => controller.repeat())
+            .fadeOut(duration: 3.seconds)
+            .scale(
+                duration: 3.seconds,
+                begin: const Offset(1, 1),
+                end: const Offset(5, 5)),
+      ),
       Center(
         child: Container(
           decoration:

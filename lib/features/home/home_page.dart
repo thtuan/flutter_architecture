@@ -10,28 +10,38 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
+class _HomePageState extends State<HomePage> {
   @override
   void initState() {
-    _controller = AnimationController(vsync: this);
-    _controller.duration = 1.seconds;
-    _controller.repeat();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Center(
-      child: ElevatedButton(
-        onPressed: () {
+    return Center(
+      child: InkWell(
+        onTap: () {
           context.read<CallingCubit>().makeCall();
         },
-        child: const Text('Click to call'),
+        child: Container(
+            decoration: const ShapeDecoration(
+                shape: CircleBorder(), color: Colors.orangeAccent),
+            width: 100,
+            height: 100,
+            child: Center(
+              child: const Text(
+                'Call me, honey...',
+                textAlign: TextAlign.center,
+              )
+                  .animate(onPlay: (controller) => controller.repeat())
+                  .shake(duration: 500.ms),
+            )).animate(onPlay: (controller) {
+          controller.repeat();
+        }).scale(
+            duration: 2.seconds,
+            begin: const Offset(0.5, 0.5),
+            end: const Offset(1, 1)),
       ),
-    ));
+    );
   }
 }

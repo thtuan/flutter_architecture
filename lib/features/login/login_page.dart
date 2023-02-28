@@ -6,10 +6,8 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        child: Lottie.asset('assets/lotties/login.json'),
-      ),
+    return Container(
+      child: Lottie.asset('assets/lotties/login.json'),
     );
   }
 }
