@@ -4,7 +4,7 @@
 Flutter repository follow BLOC Architecture and Common library
 </p>
 <p align="center">
-<img src="https://raw.githubusercontent.com/thtuan/flutter_architecture/master/screenshots/state_flutter.png" width="100" alt="build">
+<img src="https://raw.githubusercontent.com/thtuan/flutter_architecture/master/screenshots/state_flutter.png" width="500" alt="build">
 </p>
 
 ## Getting Started
