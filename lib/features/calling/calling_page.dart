@@ -2,7 +2,7 @@ import 'package:architecture/blocs/calling/calling_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 import 'package:lottie/lottie.dart';
 
 class CallingPage extends StatefulWidget {
@@ -55,7 +55,21 @@ class IncomingCall extends StatefulWidget {
 }
 
 class _IncomingCallState extends State<IncomingCall> {
-  final _log = Logger('_IncomingCallState');
+  final _log = Logger(
+    printer: PrettyPrinter(
+        methodCount: 2,
+        // number of method calls to be displayed
+        errorMethodCount: 8,
+        // number of method calls if stacktrace is provided
+        lineLength: 120,
+        // width of the output
+        colors: true,
+        // Colorful log messages
+        printEmojis: true,
+        // Print an emoji for each log message
+        printTime: false // Should each log print contain a timestamp
+        ),
+  );
 
   @override
   void initState() {
@@ -81,7 +95,7 @@ class _IncomingCallState extends State<IncomingCall> {
             children: [
               RawMaterialButton(
                 onPressed: () {
-                  _log.info('hangUp');
+                  _log.i('hangUp');
                   context.read<CallingCubit>().hangUp();
                 },
                 elevation: 2.0,

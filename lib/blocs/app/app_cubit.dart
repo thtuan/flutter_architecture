@@ -1,5 +1,6 @@
-import 'package:architecture/models/auth.dart';
-import 'package:architecture/models/user.dart';
+import 'package:architecture/blocs/app/app_event_factory.dart';
+import 'package:architecture/models/auth/auth.dart';
+import 'package:architecture/models/user/user.dart';
 import 'package:architecture/repository/auth/auth_repository.dart';
 import 'package:architecture/services/user/user_local_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,17 @@ class AppCubit extends Cubit<AppState> {
 
   AppCubit(this.authRepository)
       : super(AppState.initial(
-            auth: Auth('assetToken', 'refreshToken'), user: User()));
+            auth: Auth('assetToken', 'refreshToken'), user: User())) {
+    AppEventFactory.instance.stream().listen((event) {
+      event.mapOrNull(onError: (error) {
+        emit(AppState.error(
+            auth: state.auth,
+            user: state.user,
+            code: error.code,
+            message: error.message));
+      });
+    });
+  }
 
   void checkSession() {
     //TODO(TuanHT): Checking from local and prepare for new session

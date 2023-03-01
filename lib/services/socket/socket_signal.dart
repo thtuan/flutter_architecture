@@ -1,11 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:architecture/services/calling/calling_event.dart';
 import 'package:architecture/services/calling/calling_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class SocketSignal {
@@ -24,7 +23,21 @@ class SocketSignal {
 
   late final Map<String, Function> _eventActions;
   WebSocketChannel? _channel;
-  final _log = Logger('CallingSignal');
+  final _log = Logger(
+    printer: PrettyPrinter(
+        methodCount: 2,
+        // number of method calls to be displayed
+        errorMethodCount: 8,
+        // number of method calls if stacktrace is provided
+        lineLength: 120,
+        // width of the output
+        colors: true,
+        // Colorful log messages
+        printEmojis: true,
+        // Print an emoji for each log message
+        printTime: false // Should each log print contain a timestamp
+        ),
+  );
 
   final StreamController<CallingEvent> callingEvent =
       StreamController.broadcast();
@@ -32,16 +45,20 @@ class SocketSignal {
   void openConnection(String url) {
     _channel = WebSocketChannel.connect(Uri.parse(url));
     _channel?.stream.listen((event) {
-      _log.info('Received message: $event');
+      _log.i('Received message: $event');
       _handleEvent(event);
     }, onDone: (() {
-      Fluttertoast.showToast(
-          msg: 'Socket disconnected plz check your connection');
+      // Fluttertoast.showToast(
+      //     msg: 'Socket disconnected plz check your connection');
     }), onError: ((exception) {
-      if (exception is SocketException) {
-        openConnection(url);
+      if (exception is WebSocketChannelException) {
+        Fluttertoast.showToast(
+            msg: 'Cannot connect to server, try again later');
+
+        // openConnection(url);
+      } else {
+        Fluttertoast.showToast(msg: exception?.message ?? '');
       }
-      Fluttertoast.showToast(msg: exception?.message ?? '');
     }));
   }
 
@@ -69,12 +86,12 @@ class SocketSignal {
   }
 
   void _receivedMakeCall(dynamic data) {
-    _log.warning('_receivedMakeCall');
+    _log.w('_receivedMakeCall');
     callingEvent.sink.add(const CallingEvent.receivedMakeCall());
   }
 
   Future<void> _receivedAnswerCall(dynamic data) async {
-    _log.warning('_receivedAnswerCall');
+    _log.w('_receivedAnswerCall');
     callingEvent.sink.add(const CallingEvent.receivedAnswerCall());
     final offer = await CallingService.instance.createOffer();
     final event = {'type': 'OFFER', 'data': offer.toMap()};
@@ -82,7 +99,7 @@ class SocketSignal {
   }
 
   Future<void> _receivedOffer(dynamic data) async {
-    _log.warning('_receivedOffer');
+    _log.w('_receivedOffer');
     callingEvent.sink.add(const CallingEvent.receivedOffer());
     await CallingService.instance.addRemoteDescription(data);
     final answer = await CallingService.instance.createAnswer();
@@ -91,30 +108,30 @@ class SocketSignal {
   }
 
   Future<void> _receivedAnswer(dynamic data) async {
-    _log.warning('_receivedAnswer');
+    _log.w('_receivedAnswer');
     CallingService.instance.addRemoteDescription(data);
     callingEvent.sink.add(const CallingEvent.receivedAnswer());
   }
 
   void _receivedHangUp(dynamic data) {
     callingEvent.sink.add(const CallingEvent.receivedHandUp());
-    _log.warning('_receivedHangUp');
+    _log.w('_receivedHangUp');
     CallingService.instance.stopPeerStream();
   }
 
   void _receivedCandidate(dynamic data) {
-    _log.info('Received candidate');
+    _log.i('Received candidate');
     CallingService.instance.addRemoteCandidate(data);
     // callingEvent.sink.add(const CallingEvent.receivedCandidate());
   }
 
   void sendEvent(Map<String, dynamic> data) {
-    _log.info('Send $data, $_channel');
+    _log.i('Send $data, $_channel');
     _channel?.sink.add(json.encode(data));
   }
 
   void close() {
-    _log.info('Close socket');
+    _log.i('Close socket');
     _channel?.sink.close();
   }
 }

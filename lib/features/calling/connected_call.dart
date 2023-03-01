@@ -3,7 +3,7 @@ import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
 class ConnectedCall extends StatefulWidget {
   const ConnectedCall({Key? key}) : super(key: key);
@@ -13,7 +13,21 @@ class ConnectedCall extends StatefulWidget {
 }
 
 class _ConnectedCallState extends State<ConnectedCall> {
-  final _log = Logger('_ConnectedCallState');
+  final _log = Logger(
+    printer: PrettyPrinter(
+        methodCount: 2,
+        // number of method calls to be displayed
+        errorMethodCount: 8,
+        // number of method calls if stacktrace is provided
+        lineLength: 120,
+        // width of the output
+        colors: true,
+        // Colorful log messages
+        printEmojis: true,
+        // Print an emoji for each log message
+        printTime: false // Should each log print contain a timestamp
+        ),
+  );
   RTCVideoRenderer localVideoRenderer = RTCVideoRenderer();
   RTCVideoRenderer remoteVideoRenderer = RTCVideoRenderer();
 
@@ -36,7 +50,7 @@ class _ConnectedCallState extends State<ConnectedCall> {
 
   @override
   deactivate() {
-    _log.info('deactivate');
+    _log.i('deactivate');
     super.deactivate();
     localVideoRenderer.dispose();
     remoteVideoRenderer.dispose();
@@ -93,7 +107,7 @@ class _ConnectedCallState extends State<ConnectedCall> {
                   children: [
                     RawMaterialButton(
                       onPressed: () {
-                        _log.info('hangUp');
+                        _log.i('hangUp');
                         context.read<CallingCubit>().hangUp();
                       },
                       elevation: 2.0,

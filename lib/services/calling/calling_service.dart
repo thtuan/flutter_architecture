@@ -1,6 +1,6 @@
 import 'package:architecture/services/socket/socket_signal.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
 typedef StreamStateCallback = void Function(MediaStream stream);
 
@@ -11,7 +11,7 @@ abstract class CallingFlow {
 }
 
 class CallingService {
-  final logger = Logger('CallingService');
+  final logger = Logger();
 
   CallingService._();
 
@@ -52,7 +52,7 @@ class CallingService {
 
   Future<void> initConfig() async {
     await _openUserMedia();
-    logger.info('Create PeerConnection with configuration: $configuration');
+    logger.i('Create PeerConnection with configuration: $configuration');
     peerConnection = await createPeerConnection(_config, {
       ...configuration,
       ...{'sdpSemantics': sdpSemantics}
@@ -101,20 +101,20 @@ class CallingService {
   Future<dynamic> createOffer() async {
     RTCSessionDescription offer = await peerConnection!.createOffer();
     await peerConnection!.setLocalDescription(_fixSdp(offer));
-    logger.info('Created offer: $offer');
+    logger.i('Created offer: $offer');
     return offer;
   }
 
   Future<dynamic> createAnswer() async {
     var answer = await peerConnection!.createAnswer();
-    logger.info('Created Answer $answer');
+    logger.i('Created Answer $answer');
     await peerConnection!.setLocalDescription(_fixSdp(answer));
     return answer;
   }
 
   // Use for exchanging candidates
   void addRemoteCandidate(Map<String, dynamic> data) {
-    logger.info('Got new remote ICE candidate: $data}');
+    logger.i('Got new remote ICE candidate: $data}');
     peerConnection?.addCandidate(
       RTCIceCandidate(
         data['candidate'],
@@ -132,7 +132,7 @@ class CallingService {
         data['type'],
       );
 
-      logger.info("Someone tried to connect");
+      logger.i("Someone tried to connect");
       await peerConnection?.setRemoteDescription(remoteDescription);
     }
   }
@@ -160,11 +160,11 @@ class CallingService {
 
   void registerPeerConnectionListeners() {
     peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      logger.info('ICE gathering state changed: $state');
+      logger.i('ICE gathering state changed: $state');
     };
 
     peerConnection?.onConnectionState = (RTCPeerConnectionState state) {
-      logger.info('Connection state change: $state');
+      logger.i('Connection state change: $state');
       callingState = state;
       if (state == RTCPeerConnectionState.RTCPeerConnectionStateConnected) {
         onConnected?.call(_localStream!, [_remoteStream!]);
@@ -172,29 +172,29 @@ class CallingService {
     };
 
     peerConnection?.onSignalingState = (RTCSignalingState state) {
-      logger.info('Signaling state change: $state');
+      logger.i('Signaling state change: $state');
     };
 
     peerConnection?.onIceGatheringState = (RTCIceGatheringState state) {
-      logger.info('ICE connection state change: $state');
+      logger.i('ICE connection state change: $state');
     };
 
     peerConnection?.onAddStream = (MediaStream stream) {
-      logger.info("Add remote stream");
+      logger.i("Add remote stream");
       _remoteStream = stream;
       onAddRemoteStream?.call(stream);
     };
 
     peerConnection?.onIceCandidate = (RTCIceCandidate candidate) {
-      logger.info('Got candidate: ${candidate.toMap()}');
+      logger.i('Got candidate: ${candidate.toMap()}');
       SocketSignal.instance
           .sendEvent({'type': 'CANDIDATE', 'data': candidate.toMap()});
     };
 
     peerConnection?.onTrack = (RTCTrackEvent event) {
-      logger.info('Got remote track: ${event.streams[0]}');
+      logger.i('Got remote track: ${event.streams[0]}');
       event.streams[0].getTracks().forEach((track) {
-        logger.info('Add a track to the remoteStream $track');
+        logger.i('Add a track to the remoteStream $track');
         _remoteStream?.addTrack(track);
       });
     };

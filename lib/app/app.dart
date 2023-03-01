@@ -4,8 +4,6 @@ import 'package:architecture/blocs/theme/theme_cubit.dart';
 import 'package:architecture/repository/auth/auth_repository.dart';
 import 'package:architecture/services/api/client/auth_client.dart';
 import 'package:architecture/services/socket/socket_signal.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:logging/logging.dart';
 
 class App {
   App._();
@@ -32,7 +30,6 @@ class App {
   late final AuthClient _authClient;
 
   void init() {
-    _initLogging();
     _initApiClient();
     _initRepositories();
     _initBlocs();
@@ -41,15 +38,6 @@ class App {
 
   void _initSocket() {
     SocketSignal.instance.openConnection('ws://localhost:8080/ws');
-  }
-
-  void _initLogging() {
-    Logger.root.clearListeners();
-    Logger.root.level = Level.ALL; // defaults to Level.INFO
-    Logger.root.onRecord.listen((record) {
-      debugPrint(
-          'Architecture=${record.object}=${record.level.name}: ${record.time}: ${record.message}');
-    });
   }
 
   void _initBlocs() {
@@ -62,7 +50,5 @@ class App {
     _authRepository = AuthRepository();
   }
 
-  void _initApiClient() {
-    _authClient = AuthClient(url: 'url');
-  }
+  void _initApiClient() {}
 }

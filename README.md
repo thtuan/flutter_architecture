@@ -52,12 +52,17 @@ C2 -.-> B1
 - Use [freezed](https://pub.dev/packages/freezed)
   and [build_runner](https://pub.dev/packages/build_runner) for create Models and Bloc States
 - Use [go_router](https://pub.dev/packages/go_router) for navigation
+- Use [dio](https://pub.dev/packages/dio)[retrofit](https://pub.dev/packages/retrofit) for api
+  client
+
+## Done
+
+- [ x ] Building CI/CD with GitHub Action
+- [ x ] Support calling function with WebRTC and WebSocket
 
 ## WIP
 
 - [ ] Refactor code style
-- [ ] Building CI/CD with GitHub Action
-- [ ] Support calling function with WebRTC and WebSocket
 - [ ] Config deeplink and redirect
 
 ## FUTURE

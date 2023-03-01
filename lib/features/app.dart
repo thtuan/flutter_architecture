@@ -6,9 +6,8 @@ import 'package:architecture/features/calling/connected_call.dart';
 import 'package:architecture/features/error/error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
 class AppWidget extends StatefulWidget {
   final Widget child;
@@ -20,7 +19,21 @@ class AppWidget extends StatefulWidget {
 }
 
 class _AppWidgetState extends State<AppWidget> {
-  final logging = Logger('AppWidget');
+  final logging = Logger(
+    printer: PrettyPrinter(
+        methodCount: 2,
+        // number of method calls to be displayed
+        errorMethodCount: 8,
+        // number of method calls if stacktrace is provided
+        lineLength: 120,
+        // width of the output
+        colors: true,
+        // Colorful log messages
+        printEmojis: true,
+        // Print an emoji for each log message
+        printTime: false // Should each log print contain a timestamp
+        ),
+  );
 
   @override
   void initState() {
@@ -47,8 +60,10 @@ class _AppWidgetState extends State<AppWidget> {
                   break;
                 case 400:
                   break;
+                case 500:
+                  break;
                 default:
-                  Fluttertoast.showToast(msg: state.message);
+                  // Fluttertoast.showToast(msg: state.message);
                   break;
               }
             }, inSession: (state) {

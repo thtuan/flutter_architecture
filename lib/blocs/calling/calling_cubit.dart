@@ -2,12 +2,26 @@ import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:architecture/services/calling/calling_service.dart';
 import 'package:architecture/services/socket/socket_signal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logging/logging.dart';
+import 'package:logger/logger.dart';
 
 class CallingCubit extends Cubit<CallingState> {
   final callingService = CallingService.instance;
   final callingSignal = SocketSignal.instance;
-  final _log = Logger('CallingCubit');
+  final _log = Logger(
+    printer: PrettyPrinter(
+        methodCount: 2,
+        // number of method calls to be displayed
+        errorMethodCount: 8,
+        // number of method calls if stacktrace is provided
+        lineLength: 120,
+        // width of the output
+        colors: true,
+        // Colorful log messages
+        printEmojis: true,
+        // Print an emoji for each log message
+        printTime: false // Should each log print contain a timestamp
+        ),
+  );
 
   CallingCubit() : super(const CallingState.idle());
 
@@ -22,7 +36,7 @@ class CallingCubit extends Cubit<CallingState> {
     callingSignal.callingEvent.stream.listen((event) {
       event.maybeMap(
           receivedMakeCall: (value) {
-            _log.info('Emit incoming call');
+            _log.i('Emit incoming call');
             emit(const CallingState.incomingCall());
           },
           receivedAnswer: (value) {},
@@ -50,7 +64,7 @@ class CallingCubit extends Cubit<CallingState> {
 
   Future<void> hangUp() async {
     await callingService.makeHangUp();
-    _log.info('Change state to idle');
+    _log.i('Change state to idle');
     emit(const CallingState.idle());
   }
 }
