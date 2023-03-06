@@ -23,21 +23,7 @@ class SocketSignal {
 
   late final Map<String, Function> _eventActions;
   WebSocketChannel? _channel;
-  final _log = Logger(
-    printer: PrettyPrinter(
-        methodCount: 2,
-        // number of method calls to be displayed
-        errorMethodCount: 8,
-        // number of method calls if stacktrace is provided
-        lineLength: 120,
-        // width of the output
-        colors: true,
-        // Colorful log messages
-        printEmojis: true,
-        // Print an emoji for each log message
-        printTime: false // Should each log print contain a timestamp
-        ),
-  );
+  final _log = Logger();
 
   final StreamController<CallingEvent> callingEvent =
       StreamController.broadcast();
@@ -48,8 +34,8 @@ class SocketSignal {
       _log.i('Received message: $event');
       _handleEvent(event);
     }, onDone: (() {
-      // Fluttertoast.showToast(
-      //     msg: 'Socket disconnected plz check your connection');
+      Fluttertoast.showToast(
+          msg: 'Socket disconnected plz check your connection');
     }), onError: ((exception) {
       if (exception is WebSocketChannelException) {
         Fluttertoast.showToast(

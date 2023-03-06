@@ -57,8 +57,9 @@ C2 -.-> B1
 
 ## Done
 
-- [ x ] Building CI/CD with GitHub Action
-- [ x ] Support calling function with WebRTC and WebSocket
+- [x] Building CI/CD with GitHub Action
+- [x] Support calling function with WebRTC and WebSocket
+- [x] Add email filter example
 
 ## WIP
 
