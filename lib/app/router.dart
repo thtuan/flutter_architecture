@@ -1,6 +1,7 @@
 import 'package:architecture/features/app.dart';
 import 'package:architecture/features/home/home_page.dart';
 import 'package:architecture/features/login/login_page.dart';
+import 'package:architecture/features/splash/splash_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,7 +15,7 @@ final appRouter =
     routes: [
       GoRoute(
         path: '/',
-        pageBuilder: (context, state) => transitionPage(const HomePage()),
+        pageBuilder: (context, state) => transitionPage(const SplashPage()),
         routes: [
           GoRoute(
               path: 'login',
@@ -30,12 +31,12 @@ final appRouter =
   ),
 ]);
 
-CustomTransitionPage<dynamic> transitionPage(Widget child) {
+CustomTransitionPage transitionPage(Widget child) {
   return CustomTransitionPage(
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
-          opacity: CurveTween(curve: Curves.easeInOutCirc).animate(animation),
+          opacity: animation,
           child: child,
         );
       });

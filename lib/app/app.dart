@@ -3,7 +3,6 @@ import 'package:architecture/blocs/calling/calling_cubit.dart';
 import 'package:architecture/blocs/theme/theme_cubit.dart';
 import 'package:architecture/repository/auth/auth_repository.dart';
 import 'package:architecture/services/api/client/auth_client.dart';
-import 'package:architecture/services/socket/socket_signal.dart';
 
 class App {
   App._();
@@ -37,7 +36,7 @@ class App {
   }
 
   void _initSocket() {
-    SocketSignal.instance.openConnection('ws://localhost:8080/ws');
+    // SocketSignal.instance.openConnection('ws://localhost:8080/ws');
   }
 
   void _initBlocs() {
