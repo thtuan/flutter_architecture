@@ -3,7 +3,7 @@ import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 
 class ConnectedCall extends StatefulWidget {
   const ConnectedCall({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class ConnectedCall extends StatefulWidget {
 }
 
 class _ConnectedCallState extends State<ConnectedCall> {
-  final _log = Logger();
+  final _log = Logger('_ConnectedCallState');
   RTCVideoRenderer localVideoRenderer = RTCVideoRenderer();
   RTCVideoRenderer remoteVideoRenderer = RTCVideoRenderer();
 
@@ -36,7 +36,7 @@ class _ConnectedCallState extends State<ConnectedCall> {
 
   @override
   deactivate() {
-    _log.i('deactivate');
+    _log.info('deactivate');
     super.deactivate();
     localVideoRenderer.dispose();
     remoteVideoRenderer.dispose();
@@ -93,7 +93,7 @@ class _ConnectedCallState extends State<ConnectedCall> {
                   children: [
                     RawMaterialButton(
                       onPressed: () {
-                        _log.i('hangUp');
+                        _log.info('hangUp');
                         context.read<CallingCubit>().hangUp();
                       },
                       elevation: 2.0,

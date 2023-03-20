@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:architecture/services/calling/calling_event.dart';
 import 'package:architecture/services/calling/calling_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 class SocketSignal {
@@ -23,7 +23,7 @@ class SocketSignal {
 
   late final Map<String, Function> _eventActions;
   WebSocketChannel? _channel;
-  final _log = Logger();
+  final _log = Logger('SocketSignal');
 
   final StreamController<CallingEvent> callingEvent =
       StreamController.broadcast();
@@ -31,7 +31,7 @@ class SocketSignal {
   void openConnection(String url) {
     _channel = WebSocketChannel.connect(Uri.parse(url));
     _channel?.stream.listen((event) {
-      _log.i('Received message: $event');
+      _log.info('Received message: $event');
       _handleEvent(event);
     }, onDone: (() {
       Fluttertoast.showToast(
@@ -72,12 +72,12 @@ class SocketSignal {
   }
 
   void _receivedMakeCall(dynamic data) {
-    _log.w('_receivedMakeCall');
+    _log.info('_receivedMakeCall');
     callingEvent.sink.add(const CallingEvent.receivedMakeCall());
   }
 
   Future<void> _receivedAnswerCall(dynamic data) async {
-    _log.w('_receivedAnswerCall');
+    _log.info('_receivedAnswerCall');
     callingEvent.sink.add(const CallingEvent.receivedAnswerCall());
     final offer = await CallingService.instance.createOffer();
     final event = {'type': 'OFFER', 'data': offer.toMap()};
@@ -85,7 +85,7 @@ class SocketSignal {
   }
 
   Future<void> _receivedOffer(dynamic data) async {
-    _log.w('_receivedOffer');
+    _log.info('_receivedOffer');
     callingEvent.sink.add(const CallingEvent.receivedOffer());
     await CallingService.instance.addRemoteDescription(data);
     final answer = await CallingService.instance.createAnswer();
@@ -94,30 +94,30 @@ class SocketSignal {
   }
 
   Future<void> _receivedAnswer(dynamic data) async {
-    _log.w('_receivedAnswer');
+    _log.info('_receivedAnswer');
     CallingService.instance.addRemoteDescription(data);
     callingEvent.sink.add(const CallingEvent.receivedAnswer());
   }
 
   void _receivedHangUp(dynamic data) {
     callingEvent.sink.add(const CallingEvent.receivedHandUp());
-    _log.w('_receivedHangUp');
+    _log.info('_receivedHangUp');
     CallingService.instance.stopPeerStream();
   }
 
   void _receivedCandidate(dynamic data) {
-    _log.i('Received candidate');
+    _log.info('Received candidate');
     CallingService.instance.addRemoteCandidate(data);
     // callingEvent.sink.add(const CallingEvent.receivedCandidate());
   }
 
   void sendEvent(Map<String, dynamic> data) {
-    _log.i('Send $data, $_channel');
+    _log.info('Send $data, $_channel');
     _channel?.sink.add(json.encode(data));
   }
 
   void close() {
-    _log.i('Close socket');
+    _log.info('Close socket');
     _channel?.sink.close();
   }
 }

@@ -2,12 +2,12 @@ import 'package:architecture/blocs/calling/calling_state.dart';
 import 'package:architecture/services/calling/calling_service.dart';
 import 'package:architecture/services/socket/socket_signal.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
+import 'package:logging/logging.dart';
 
 class CallingCubit extends Cubit<CallingState> {
   final callingService = CallingService.instance;
   final callingSignal = SocketSignal.instance;
-  final _log = Logger();
+  final _log = Logger('CallingCubit');
 
   CallingCubit() : super(const CallingState.idle());
 
@@ -22,7 +22,7 @@ class CallingCubit extends Cubit<CallingState> {
     callingSignal.callingEvent.stream.listen((event) {
       event.maybeMap(
           receivedMakeCall: (value) {
-            _log.i('Emit incoming call');
+            _log.info('Emit incoming call');
             emit(const CallingState.incomingCall());
           },
           receivedAnswer: (value) {},
@@ -50,7 +50,7 @@ class CallingCubit extends Cubit<CallingState> {
 
   Future<void> hangUp() async {
     await callingService.makeHangUp();
-    _log.i('Change state to idle');
+    _log.info('Change state to idle');
     emit(const CallingState.idle());
   }
 }

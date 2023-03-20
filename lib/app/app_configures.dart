@@ -1,0 +1,4 @@
+enum AppConfig {
+  baseUrl,
+  connectionTimeOut,
+}

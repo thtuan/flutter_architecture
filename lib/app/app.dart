@@ -1,53 +1,48 @@
-import 'package:architecture/blocs/app/app_cubit.dart';
-import 'package:architecture/blocs/calling/calling_cubit.dart';
-import 'package:architecture/blocs/theme/theme_cubit.dart';
-import 'package:architecture/repository/auth/auth_repository.dart';
-import 'package:architecture/services/api/client/auth_client.dart';
+import 'package:architecture/app/app_configures.dart';
+import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
+
+enum Env { dev, staging, production }
+
+extension EnvExt on String {
+  Env toEnv() {
+    switch (this) {
+      case 'dev':
+        return Env.dev;
+      case 'staging':
+        return Env.staging;
+      case 'production':
+        return Env.production;
+      default:
+        return Env.dev;
+    }
+  }
+}
 
 class App {
   App._();
 
-  static final App instance = App._();
+  static late Env _currentEnv;
 
-  AppCubit get appCubit => _appCubit;
-
-  // cubit
-  ThemeCubit get themeCubit => _themeCubit;
-
-  CallingCubit get callingCubit => _callingCubit;
-
-  // client
-  AuthClient get authClient => _authClient;
-
-  // repository
-  late final AppCubit _appCubit;
-  late final ThemeCubit _themeCubit;
-  late final CallingCubit _callingCubit;
-
-  late final AuthRepository _authRepository;
-
-  late final AuthClient _authClient;
-
-  void init() {
-    _initApiClient();
-    _initRepositories();
-    _initBlocs();
-    _initSocket();
+  static void init(Env env) {
+    Logger.root.level = Level.ALL; // defaults to Level.INFO
+    Logger.root.onRecord.listen((record) {
+      debugPrint(
+          '${record.loggerName}: ${record.level.name}: ${record.time}: ${record.message}');
+    });
+    _currentEnv = env;
   }
 
-  void _initSocket() {
-    // SocketSignal.instance.openConnection('ws://localhost:8080/ws');
-  }
+  static Map<AppConfig, String> get configures => _configures[_currentEnv];
+  static final Map<Env, dynamic> _configures = {
+    Env.dev: dev,
+    Env.staging: staging,
+    Env.production: product,
+  };
 
-  void _initBlocs() {
-    _appCubit = AppCubit(_authRepository)..checkSession();
-    _themeCubit = ThemeCubit();
-    _callingCubit = CallingCubit()..startListenEvent();
-  }
-
-  void _initRepositories() {
-    _authRepository = AuthRepository();
-  }
-
-  void _initApiClient() {}
+  static final Map<AppConfig, String> dev = {
+    AppConfig.baseUrl: '',
+  };
+  static final Map<AppConfig, String> staging = {AppConfig.baseUrl: ''};
+  static final Map<AppConfig, String> product = {AppConfig.baseUrl: ''};
 }

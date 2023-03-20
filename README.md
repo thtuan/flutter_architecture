@@ -16,7 +16,7 @@ cd PATH/TO/YOUR/PROJECT
 
 flutter pub get
 
-flutter run --flavor dev
+flutter run --dart-define="ENV=dev|staging|production" --flavor dev|pro
 ```
 
 ## Architecture Flow

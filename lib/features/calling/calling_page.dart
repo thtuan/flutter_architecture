@@ -2,8 +2,7 @@ import 'package:architecture/blocs/calling/calling_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:logger/logger.dart';
-import 'package:lottie/lottie.dart';
+import 'package:logging/logging.dart';
 
 class CallingPage extends StatefulWidget {
   const CallingPage({Key? key}) : super(key: key);
@@ -55,7 +54,7 @@ class IncomingCall extends StatefulWidget {
 }
 
 class _IncomingCallState extends State<IncomingCall> {
-  final _log = Logger();
+  final _log = Logger('_IncomingCallState');
 
   @override
   void initState() {
@@ -69,11 +68,6 @@ class _IncomingCallState extends State<IncomingCall> {
         Container(
           color: Colors.blue,
         ),
-        Center(
-          child: WaveAnimated(
-            child: Lottie.asset('assets/lotties/home.json'),
-          ),
-        ),
         Align(
           alignment: const Alignment(0, 0.9),
           child: Row(
@@ -81,7 +75,7 @@ class _IncomingCallState extends State<IncomingCall> {
             children: [
               RawMaterialButton(
                 onPressed: () {
-                  _log.i('hangUp');
+                  _log.info('hangUp');
                   context.read<CallingCubit>().hangUp();
                 },
                 elevation: 2.0,

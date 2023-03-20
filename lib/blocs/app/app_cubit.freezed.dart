@@ -97,6 +97,8 @@ abstract class $AppStateCopyWith<$Res> {
       _$AppStateCopyWithImpl<$Res, AppState>;
   @useResult
   $Res call({Auth auth, User user, String? lastRoutePath});
+
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -131,6 +133,14 @@ class _$AppStateCopyWithImpl<$Res, $Val extends AppState>
               as String?,
     ) as $Val);
   }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $UserCopyWith<$Res> get user {
+    return $UserCopyWith<$Res>(_value.user, (value) {
+      return _then(_value.copyWith(user: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -141,6 +151,9 @@ abstract class _$$_InitialCopyWith<$Res> implements $AppStateCopyWith<$Res> {
   @override
   @useResult
   $Res call({Auth auth, User user, String? lastRoutePath});
+
+  @override
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -329,6 +342,9 @@ abstract class _$$_InSessionCopyWith<$Res> implements $AppStateCopyWith<$Res> {
   @override
   @useResult
   $Res call({Auth auth, User user, String? lastRoutePath});
+
+  @override
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -518,6 +534,9 @@ abstract class _$$_OutSessionCopyWith<$Res> implements $AppStateCopyWith<$Res> {
   @override
   @useResult
   $Res call({Auth auth, User user, String? lastRoutePath});
+
+  @override
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -707,6 +726,9 @@ abstract class _$$_ErrorCopyWith<$Res> implements $AppStateCopyWith<$Res> {
   @useResult
   $Res call(
       {Auth auth, User user, int code, String message, String? lastRoutePath});
+
+  @override
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
@@ -920,6 +942,9 @@ abstract class _$$_InactiveCopyWith<$Res> implements $AppStateCopyWith<$Res> {
   @override
   @useResult
   $Res call({Auth auth, User user, String? lastRoutePath});
+
+  @override
+  $UserCopyWith<$Res> get user;
 }
 
 /// @nodoc
