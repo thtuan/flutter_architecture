@@ -1,7 +1,6 @@
-import 'package:architecture/blocs/app/app_event_factory.dart';
+import 'package:architecture/blocs/app/app_event.dart';
 import 'package:architecture/models/auth/auth.dart';
 import 'package:architecture/models/user/user.dart';
-import 'package:architecture/repository/auth_repository.dart';
 import 'package:architecture/services/local_storage/local_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,20 +9,17 @@ part 'app_cubit.freezed.dart';
 part 'app_state.dart';
 
 class AppCubit extends Cubit<AppState> {
-  final AuthRepository authRepository;
   final LocalStorage localStorage = LocalStorage.instance;
 
-  AppCubit(this.authRepository)
+  AppCubit()
       : super(AppState.initial(
             auth: Auth('assetToken', 'refreshToken'), user: const User())) {
-    AppEventFactory.instance.stream().listen((event) {
-      event.mapOrNull(onError: (error) {
-        emit(AppState.error(
-            auth: state.auth,
-            user: state.user,
-            code: error.code,
-            message: error.message));
-      });
+    AppHandler.eventSubscription.listen((event) {
+      event.map(
+          showError: (showError) {},
+          showToast: (showToast) {},
+          showDialog: (showDialog) {},
+          networkProblem: (networkProblem) {});
     });
   }
 
