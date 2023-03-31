@@ -45,15 +45,12 @@ dependencies:
   equatable: ^2.0.5
   go_router: ^6.0.7
   flutter_animate: ^4.0.0
-  flutter_webrtc: ^0.9.23
-  web_socket_channel: ^2.3.0
   fluttertoast: ^8.2.1
   permission_handler: ^10.2.0
   retrofit: ^4.0.1
   json_annotation: ^4.8.0
   logging: ^1.1.1
   google_mobile_ads: ^2.3.0
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

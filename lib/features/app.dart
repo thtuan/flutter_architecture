@@ -1,8 +1,4 @@
 import 'package:architecture/blocs/app/app_cubit.dart';
-import 'package:architecture/blocs/calling/calling_cubit.dart';
-import 'package:architecture/blocs/calling/calling_state.dart';
-import 'package:architecture/features/calling/calling_page.dart';
-import 'package:architecture/features/calling/connected_call.dart';
 import 'package:architecture/features/error/error_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -65,28 +61,11 @@ class _AppWidgetState extends State<AppWidget> {
           }),
         ],
         child: Scaffold(
-            body: Stack(
-          fit: StackFit.expand,
-          children: [
-            BlocBuilder<CallingCubit, CallingState>(
-                builder: (context, blocState) {
-              return blocState.map(idle: (idle) {
-                return widget.child;
-              }, incomingCall: (incomingCall) {
-                return const IncomingCall();
-              }, outgoingCall: (outgoingCall) {
-                return const OutgoingCall();
-              }, callConnected: (callConnected) {
-                return const ConnectedCall();
-              });
-            }),
-            BlocBuilder<AppCubit, AppState>(builder: (context, state) {
-              return Visibility(
-                  visible: state.maybeMap(
-                      error: (error) => true, orElse: () => false),
-                  child: const ErrorPage());
-            })
-          ],
-        )));
+            body: BlocBuilder<AppCubit, AppState>(builder: (context, state) {
+          return Visibility(
+              visible:
+                  state.maybeMap(error: (error) => true, orElse: () => false),
+              child: const ErrorPage());
+        })));
   }
 }

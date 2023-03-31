@@ -1,4 +1,6 @@
 # Miscellaneous
+*.freezed.dart
+*.g.dart
 *.class
 *.log
 *.pyc
